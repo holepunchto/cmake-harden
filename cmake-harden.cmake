@@ -1,43 +1,49 @@
 include_guard()
 
+include(CheckCCompilerFlag)
+
 # https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
 
+macro(add_hardened_compiler_flags)
+  foreach(flag ${ARGV})
+    check_c_compiler_flag(${flag} supports_${flag})
+
+    if(supports_${flag})
+      target_compile_options(${target} PRIVATE ${flag})
+    endif()
+  endforeach()
+endmacro()
+
 macro(harden_posix)
-  target_compile_options(
-    ${target}
-    PRIVATE
-      -Wall
-      -Wformat
-      -Wformat=2
-      -Wconversion
-      -Wimplicit-fallthrough
-      -Werror=format-security
-      -Werror=implicit
-      -Werror=incompatible-pointer-types
-      -Werror=int-conversion
-      -fno-delete-null-pointer-checks
-      -fno-strict-overflow
-      -fno-strict-aliasing
-      -fstrict-flex-arrays=3
-      -ftrivial-auto-var-init=zero
+  add_hardened_compiler_flags(
+    -Wall
+    -Wformat
+    -Wformat=2
+    -Wconversion
+    -Wimplicit-fallthrough
+    -Werror=format-security
+    -Werror=implicit
+    -Werror=incompatible-pointer-types
+    -Werror=int-conversion
+    -fno-delete-null-pointer-checks
+    -fno-strict-overflow
+    -fno-strict-aliasing
+    -fstrict-flex-arrays=3
+    -ftrivial-auto-var-init=zero
   )
 
   if(RUNTIME)
-    target_compile_options(
-      ${target}
-      PRIVATE
-        -fstack-clash-protection
-        -fstack-protector-strong
+    add_hardened_compiler_flags(
+      -fstack-clash-protection
+      -fstack-protector-strong
     )
   endif()
 
   if(LINUX OR ANDROID)
-    target_compile_options(
-      ${target}
-      PRIVATE
-        -Wl,-z,noexecstack
-        -Wl,-z,relro
-        -Wl,-z,now
+    add_hardened_compiler_flags(
+      -Wl,-z,noexecstack
+      -Wl,-z,relro
+      -Wl,-z,now
     )
   endif()
 endmacro()
@@ -49,10 +55,8 @@ endmacro()
 macro(harden_gcc)
   harden_posix()
 
-  target_compile_options(
-    ${target}
-    PRIVATE
-      -Wtrampolines
+  add_hardened_compiler_flags(
+    -Wtrampolines
   )
 endmacro()
 
