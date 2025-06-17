@@ -15,6 +15,7 @@ macro(harden_posix)
       -Werror=implicit
       -Werror=incompatible-pointer-types
       -Werror=int-conversion
+      -fstrict-flex-arrays
       -fno-delete-null-pointer-checks
       -fno-strict-overflow
       -fno-strict-aliasing
@@ -25,7 +26,6 @@ macro(harden_posix)
     target_compile_options(
       ${target}
       PRIVATE
-        -fstrict-flex-arrays=3
         -fstack-clash-protection
         -fstack-protector-strong
     )
