@@ -19,6 +19,12 @@ macro(add_hardened_compiler_flags)
   endforeach()
 endmacro()
 
+macro(add_hardened_linker_flags)
+  foreach(flag ${ARGV})
+    target_link_options(${target} PRIVATE ${flag})
+  endforeach()
+endmacro()
+
 macro(harden_posix)
   add_hardened_compiler_flags(
     -Wall
@@ -35,6 +41,12 @@ macro(harden_posix)
     -fno-strict-aliasing
     -fstrict-flex-arrays=3
     -ftrivial-auto-var-init=zero
+  )
+
+  add_hardened_linker_flags(
+    -Wl,-z,noexecstack
+    -Wl,-z,relro
+    -Wl,-z,now
   )
 
   if(runtime)
