@@ -1,12 +1,17 @@
 include_guard()
 
 include(CheckCCompilerFlag)
+include(CheckCXXCompilerFlag)
 
 # https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
 
 macro(add_hardened_compiler_flags)
   foreach(flag ${ARGV})
-    check_c_compiler_flag(${flag} supports_${flag})
+    if(lang MATCHES "CXX")
+      check_cxx_compiler_flag(${flag} supports_${flag})
+    else()
+      check_c_compiler_flag(${flag} supports_${flag})
+    endif()
 
     if(supports_${flag})
       target_compile_options(${target} PRIVATE ${flag})
@@ -32,7 +37,7 @@ macro(harden_posix)
     -ftrivial-auto-var-init=zero
   )
 
-  if(RUNTIME)
+  if(runtime)
     add_hardened_compiler_flags(
       -fstack-clash-protection
       -fstack-protector-strong
@@ -66,6 +71,8 @@ endmacro()
 
 function(harden target)
   set(option_keywords
+    C
+    CXX
     RUNTIME
   )
 
@@ -73,13 +80,21 @@ function(harden target)
     PARSE_ARGV 1 ARGV "${option_keywords}" "" ""
   )
 
-  set(RUNTIME ${ARGV_RUNTIME})
+  set(runtime ${ARGV_RUNTIME})
 
-  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+  if(ARGV_CXX)
+    set(lang CXX)
+  else()
+    set(lang C)
+  endif()
+
+  set(compiler ${CMAKE_${lang}_COMPILER_ID})
+
+  if(compiler MATCHES "Clang")
     harden_clang()
-  elseif(CMAKE_C_COMPILER_ID MATCHES "GCC")
+  elseif(compiler MATCHES "GCC")
     harden_gcc()
-  elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
+  elseif(compiler MATCHES "MSVC")
     harden_msvc()
   endif()
 endfunction()

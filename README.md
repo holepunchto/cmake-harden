@@ -12,7 +12,7 @@ find_package(cmake-harden REQUIRED PATHS node_modules/cmake-harden)
 
 ## API
 
-#### `harden(<target> [RUNTIME])`
+#### `harden(<target> [C|CXX] [RUNTIME])`
 
 ## License
 
