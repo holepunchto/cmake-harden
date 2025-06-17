@@ -1,0 +1,18 @@
+{
+  "name": "cmake-harden",
+  "version": "1.0.0",
+  "description": "Compiler options hardening for CMake based on the OpenSSF guidelines",
+  "files": [
+    "*.cmake"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/cmake-harden.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/cmake-harden/issues"
+  },
+  "homepage": "https://github.com/holepunchto/cmake-harden#readme"
+}
