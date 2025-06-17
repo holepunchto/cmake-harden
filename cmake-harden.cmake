@@ -15,10 +15,10 @@ macro(harden_posix)
       -Werror=implicit
       -Werror=incompatible-pointer-types
       -Werror=int-conversion
-      -fstrict-flex-arrays
       -fno-delete-null-pointer-checks
       -fno-strict-overflow
       -fno-strict-aliasing
+      -fstrict-flex-arrays=3
       -ftrivial-auto-var-init=zero
   )
 
