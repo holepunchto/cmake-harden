@@ -43,14 +43,6 @@ macro(harden_posix)
       -fstack-protector-strong
     )
   endif()
-
-  if(LINUX OR ANDROID)
-    add_hardened_compiler_flags(
-      -Wl,-z,noexecstack
-      -Wl,-z,relro
-      -Wl,-z,now
-    )
-  endif()
 endmacro()
 
 macro(harden_clang)
