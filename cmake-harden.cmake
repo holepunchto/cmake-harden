@@ -2,6 +2,7 @@ include_guard()
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+include(CheckLinkerFlag)
 
 # https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
 
@@ -21,7 +22,11 @@ endmacro()
 
 macro(add_hardened_linker_flags)
   foreach(flag ${ARGV})
-    target_link_options(${target} PRIVATE ${flag})
+    check_linker_flag(${lang} ${flag} supports_${flag})
+
+    if(supports_${flag})
+      target_link_options(${target} PRIVATE ${flag})
+    endif()
   endforeach()
 endmacro()
 
